@@ -65,7 +65,7 @@ def bool_get(value):
     return (str(value) == "1") or (value.lower() == 'yes')
 
 
-def attr_get(node, attrs, types=None):
+def attr_get(node, attrs, encoding, types=None):
     """
     parse a node and its attributes
     returning the data type specified in types
@@ -79,7 +79,7 @@ def attr_get(node, attrs, types=None):
         for key in types:
             if node.hasAttribute(key):
                 if types[key] == 'str':
-                    res[key] = str(node.getAttribute(key))
+                    res[key] = node.getAttribute(key).encode(encoding)
                 elif types[key] == 'bool':
                     res[key] = bool_get(node.getAttribute(key))
                 elif types[key] == 'int':

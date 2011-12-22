@@ -59,6 +59,8 @@ def main():
     # No need for options currently, use this for --help, --version
     parser = OptionParser(usage="%prog [options] input_file output_file",
                           version="%%prog %s" % get_version_string())
+    parser.add_option("-e", "--encoding", default="UTF-8",
+                  help="Set parser encoding. Default is UTF-8.", metavar="ENCODING")
     options, args = parser.parse_args()
 
     if len(args) < 2:
@@ -83,7 +85,7 @@ def main():
             input_file.close()
 
     try:
-        write_to_output(output_filename, parse_string(input_data))
+        write_to_output(output_filename, parse_string(input_data, encoding=options.encoding))
     except ParserError, e:
         print 'parsing rml failed with the following error'
         print e

@@ -30,6 +30,7 @@ from reportlab import platypus
 
 from trml2pdf import utils
 from trml2pdf import color
+from trml2pdf.barcode import BarCode
 
 
 
@@ -365,6 +366,12 @@ class Canvas(object):
                 args['height'] = sy * args['width'] / sx
         self.canvas.drawImage(img, **args)
 
+    def _barcode(self, node):
+        "Draw barcode"
+        barcode = BarCode(node, self.styles, self._textual(node))
+        barcode.canv = self.canvas
+        barcode.draw()
+
     def _path(self, node):
         self.path = self.canvas.beginPath()
         self.path.moveTo(**utils.attr_get(node, ['x', 'y'], self.doc.encoding))
@@ -414,6 +421,7 @@ class Canvas(object):
             'rotate': lambda node: self.canvas.rotate(float(node.getAttribute('degrees'))),
             'translate': self._translate,
             'image': self._image,
+            'barCode': self._barcode,
         }
 
         for nd in node.childNodes:
@@ -560,6 +568,8 @@ class Flowable(object):
                                             {'bulletText': 'str', 'dedent': 'int'})))
         elif node.localName == 'illustration':
             return  self._illustration(node)
+        elif node.localName == 'barCode':
+            return BarCode(node, self.styles, self._textual(node))
         elif node.localName == 'blockTable':
             return  self._table(node)
         elif node.localName == 'title':

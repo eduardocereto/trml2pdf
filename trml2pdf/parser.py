@@ -368,7 +368,7 @@ class Canvas(object):
 
     def _barcode(self, node):
         "Draw barcode"
-        barcode = BarCode(node, self.styles, self._textual(node))
+        barcode = BarCode(node, self.styles, self._textual(node), self.doc.encoding)
         barcode.canv = self.canvas
         barcode.draw()
 
@@ -569,7 +569,7 @@ class Flowable(object):
         elif node.localName == 'illustration':
             return  self._illustration(node)
         elif node.localName == 'barCode':
-            return BarCode(node, self.styles, self._textual(node))
+            return BarCode(node, self.styles, self._textual(node), self.doc.encoding)
         elif node.localName == 'blockTable':
             return  self._table(node)
         elif node.localName == 'title':

@@ -60,7 +60,7 @@ end.
 </p>
 
 <p style="code-name">I2of5</p>
-<barCode code="I2of5" height="0.35in" width="1in" checksum="yes">1234</barCode>
+<barCode code="I2of5" barWidth="0.02in" checksum="false">1234</barCode>
 
 <p style="code-name">MSI</p>
 <barCode code="MSI">1234</barCode>

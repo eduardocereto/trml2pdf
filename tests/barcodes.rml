@@ -9,16 +9,16 @@
         <frame id="body" x1="1cm" y1="1.5cm" width="19cm" height="27.2cm"/>
 
 <drawString x="1.2cm" y="26cm">I2of5</drawString>
-<barCode x="1.5cm" y="25cm" code="I2of5" height="0.35in" width="1in" checksum="yes">1234</barCode>
+<barCode x="1.32cm" y="25cm" code="I2of5" barWidth="0.02in" checksum="false">1234</barCode>
 
 <drawString x="1.2cm" y="24.5cm">MSI</drawString>
 <barCode x="1.2cm" y="23.7cm" code="MSI">1234</barCode>
 
 <drawString x="1.2cm" y="23cm">Codabar</drawString>
-<barCode x="1.7cm" y="22.2cm" code="Codabar">A012345B</barCode>
+<barCode x="1.32cm" y="22.2cm" code="Codabar" barWidth="0.02in">A012345B</barCode>
 
 <drawString x="1.2cm" y="21.5cm">Code 11</drawString>
-<barCode x="1.7cm" y="20.7cm" code="Code11">01234545634563</barCode>
+<barCode x="1.66cm" y="20.7cm" code="Code11">01234545634563</barCode>
 
 <drawString x="1.2cm" y="20cm">Code 39</drawString>
 <barCode x="1.2cm" y="19.2cm" code="Standard39">A012345B%R</barCode>

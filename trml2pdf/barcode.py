@@ -7,8 +7,7 @@ from reportlab.platypus.flowables import Flowable
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode import createBarcodeDrawing, getCodes
 # trml
-from trml2pdf import utils
-from trml2pdf import color
+from trml2pdf import utils, color
 
 
 class BarCode(Flowable):
@@ -56,12 +55,13 @@ class BarCode(Flowable):
     """
     XPOS, YPOS, WIDTH, HEIGHT = range(4)
 
-    def __init__(self, node, styles, value):
+    def __init__(self, node, styles, value, encoding):
         Flowable.__init__(self)
 
         self.node = node
         self.styles = styles
         self.value = value
+        self.encoding = encoding
         self.xpos = utils.unit_get(node.getAttribute('x'))
         self.ypos = utils.unit_get(node.getAttribute('y'))
         self.width = utils.unit_get(node.getAttribute('width'))
@@ -69,13 +69,12 @@ class BarCode(Flowable):
         self.code_name = node.getAttribute('code')
         self.codes = getCodes()
 
-        # set defaults
-        if self.code_name == "":
-            self.code_name = "Code128" # default code type
-        if not self.width:
-            self.width = self.get_default_bounds()[BarCode.WIDTH]
-        if not self.height:
-            self.height = self.get_default_bounds()[BarCode.HEIGHT]
+        from trml2pdf.parser import ParserError
+        try:
+            self.codes[self.code_name]
+        except KeyError, msg:
+            raise ParserError("Unknown barcode name '%s'." % self.code_name)
+
 
     def get_default_bounds(self):
         "Get default size of barcode"
@@ -84,24 +83,32 @@ class BarCode(Flowable):
         return barcode.getBounds() # x, y, width, height
 
     def wrap(self, *args):
-        return (self.width, self.height)
+        x, y, width, height = self.get_default_bounds()
+        if self.width:
+            width = self.width
+        if self.height:
+            height = self.height
+        return (width, height)
+
 
     def draw(self):
         "Read attribs and draw barcode"
-        kwargs = {"barStrokeWidth": 0.00001}
-        for attr in ("barFillColor", "background", "strokeColor",
-                     "barStrokeColor", "fillColor", "textColor"):
-            if self.node.hasAttribute(attr):
-                kwargs[attr] = color.get(self.node.getAttribute(attr))
-        for attr in ("fontName", "humanReadable", "debug", "lquiet", "rquiet",
-                     "quiet"):
-            if self.node.hasAttribute(attr):
-                kwargs[attr] = self.node.getAttribute(attr)
-        for attr in ("strokeWidth", "barWidth", "barStrokeWidth",
-                     "barHeight", "fontSize", "isoScale"):
-            if self.node.hasAttribute(attr):
-                kwargs[attr] = utils.unit_get(self.node.getAttribute(attr))
 
+        units = ("strokeWidth", "barWidth", "barStrokeWidth", "barHeight",
+                 "fontSize", "isoScale")
+        colors = ("barFillColor", "background", "strokeColor", "barStrokeColor",
+                  "fillColor", "textColor")
+        bools = ("humanReadable", "debug", "lquiet", "rquiet", "quiet",
+                 "checksum")
+        names = ("fontName", "routing")
+
+        kwargs = utils.attr_get(self.node, units,
+                                self.encoding,
+                                dict(zip(names, ["str"] * len(names)) +
+                                     zip(colors, ["color"] * len(colors)) +
+                                     zip(bools, ["bool"] * len(bools))),
+                                {"barStrokeWidth": 0.00001} # defaults
+                    )
         bcd = createBarcodeDrawing(self.code_name, value=self.value,
                                    width=self.width, height=self.height,
                                    **kwargs)

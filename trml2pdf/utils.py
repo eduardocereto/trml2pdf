@@ -17,6 +17,7 @@
 
 import re
 import reportlab
+from trml2pdf import color
 
 
 UNITS = [
@@ -65,13 +66,18 @@ def bool_get(value):
     return (str(value) == "1") or (value.lower() == 'yes')
 
 
-def attr_get(node, attrs, encoding, types=None):
+def attr_get(node, attrs, encoding, types=None, defaults=None):
     """
     parse a node and its attributes
     returning the data type specified in types
     otherwise returns a string
+
+    parameter defaults must be dict or None
     """
     res = {}
+    if defaults is not None:
+        res.update(defaults)
+
     for name in attrs:
         if node.hasAttribute(name):
             res[name] = unit_get(node.getAttribute(name))
@@ -84,4 +90,6 @@ def attr_get(node, attrs, encoding, types=None):
                     res[key] = bool_get(node.getAttribute(key))
                 elif types[key] == 'int':
                     res[key] = int(node.getAttribute(key))
+                elif types[key] == 'color':
+                    res[key] = color.get(node.getAttribute(key))
     return res

@@ -62,6 +62,8 @@ class BarCode(Flowable):
         self.node = node
         self.styles = styles
         self.value = value
+        self.xpos = utils.unit_get(node.getAttribute('x'))
+        self.ypos = utils.unit_get(node.getAttribute('y'))
         self.width = utils.unit_get(node.getAttribute('width'))
         self.height = utils.unit_get(node.getAttribute('height'))
         self.code_name = node.getAttribute('code')
@@ -95,7 +97,7 @@ class BarCode(Flowable):
                      "quiet"):
             if self.node.hasAttribute(attr):
                 kwargs[attr] = self.node.getAttribute(attr)
-        for attr in ("x", "y", "strokeWidth", "barWidth", "barStrokeWidth",
+        for attr in ("strokeWidth", "barWidth", "barStrokeWidth",
                      "barHeight", "fontSize", "isoScale"):
             if self.node.hasAttribute(attr):
                 kwargs[attr] = utils.unit_get(self.node.getAttribute(attr))
@@ -103,5 +105,5 @@ class BarCode(Flowable):
         bcd = createBarcodeDrawing(self.code_name, value=self.value,
                                    width=self.width, height=self.height,
                                    **kwargs)
-        renderPDF.draw(bcd, self.canv, kwargs.get("x", 0), kwargs.get("y", 0),
+        renderPDF.draw(bcd, self.canv, self.xpos, self.ypos,
                        showBoundary=self.node.getAttribute("showBoundary"))

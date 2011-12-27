@@ -86,7 +86,7 @@ class BarCode(Flowable):
 
     def draw(self):
         "Read attribs and draw barcode"
-        kwargs = {}
+        kwargs = {"barStrokeWidth": 0.00001}
         for attr in ("barFillColor", "background", "strokeColor",
                      "barStrokeColor", "fillColor", "textColor"):
             if self.node.hasAttribute(attr):
